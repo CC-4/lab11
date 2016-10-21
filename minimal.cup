@@ -1,0 +1,94 @@
+import java_cup.runtime.*;
+
+action code {:
+
+    int curr_lineno() {
+	return ((Yylex)parser.getScanner()).curr_lineno();
+    }
+
+:}
+
+parser code {:
+	public static void main(String args[]) throws Exception {
+		new parser(new Yylex(System.in)).parse();
+	}
+
+	int omerrs = 0;
+
+    public void syntax_error(Symbol cur_token) {
+        int lineno = action_obj.curr_lineno();
+        System.err.print("line " + lineno +
+		         ": parse error at or near ");
+       	 Utilities.printToken(cur_token);
+		omerrs++;
+		if (omerrs>50) {
+		   System.err.println("More than 50 errors");
+		   System.exit(1);
+		}
+    }
+    public void unrecovered_syntax_error(Symbol cur_token) {
+    }
+:}
+
+terminal SEMI, EQUAL, PLUS, TIMES, DIV, LPAREN, RPAREN, MINUS;
+terminal KEY_DEF, KEY_IF, KEY_THEN, KEY_ELSE, COMMA;
+terminal AbstractSymbol INT, ID;
+
+nonterminal Main main; 
+nonterminal Formals args; 
+nonterminal Formal arg;
+nonterminal Feature expr;
+nonterminal Expression expr2;
+nonterminal Expressions exprList;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIV;
+
+main  	  ::= main:el expr:e 
+				{: RESULT = el.appendElement(e); :}
+			| expr:e 
+				{: RESULT = (new Main(curr_lineno())).appendElement(e); :}
+			;
+
+expr 		::= KEY_DEF ID:id LPAREN args:a RPAREN EQUAL expr2:e SEMI
+				{: RESULT = new method(curr_lineno(), id, a, e); :}
+			;
+
+expr2      	::= INT:n
+				{: RESULT=new int_const(curr_lineno(), n); :}
+			| KEY_IF expr2:e1 EQUAL expr2:e2 KEY_THEN expr2:e3 KEY_ELSE expr2:e4
+				{: RESULT=new cond(curr_lineno(), e1, e2, e3, e4); :}
+			| LPAREN expr2:e RPAREN
+				{: RESULT=e; :}
+			| ID:id LPAREN exprList:el RPAREN
+				{: RESULT= new dispatch(curr_lineno(), id, el); :}
+			| expr2:l PLUS expr2:r
+				{: RESULT= new plus(curr_lineno(), l, r); :}
+			| expr2:l TIMES expr2:r
+				{: RESULT= new mul(curr_lineno(), l, r); :}
+			| expr2:l DIV expr2:r
+				{: RESULT= new divide(curr_lineno(), l, r); :}
+			| ID:id
+				{: RESULT = new id(curr_lineno(), id); :}
+			| expr2:l MINUS expr2:r
+				{: RESULT= new sub(curr_lineno(), l, r); :}
+			;
+
+exprList	::= expr2:e COMMA exprList:el
+				{: RESULT=el.appendElement(e); :}
+			| expr2:e
+				{: RESULT=(new Expressions(curr_lineno())).appendElement(e); :}
+			|
+				{: RESULT= new Expressions(curr_lineno()); :}
+			;
+
+args  	  ::= args:al COMMA arg:a 
+				{: RESULT = al.appendElement(a); :}
+			| arg:a 
+				{: RESULT = (new Formals(curr_lineno())).appendElement(a); :}
+			|
+				{: RESULT = new Formals(curr_lineno()); :}
+			;
+arg 		::= ID:id
+				{: RESULT = new Formal(curr_lineno(), id); :}
+			;
