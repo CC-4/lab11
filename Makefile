@@ -1,7 +1,6 @@
 
-# Classpath para compilar y correr el programa
-CLASSPATH=$(PWD)/lib/java-cup-11a.jar:.
-
+CLASSDIR= /usr/class/cs143/cool
+CLASSPATH := ${CLASSDIR}/lib:.:/usr/java/lib/rt.jar
 make: Yylex.java parser.java Lab11.class lab11.sh
 
 lab11.sh:
