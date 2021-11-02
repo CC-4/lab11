@@ -1,5 +1,5 @@
 
-CLASSDIR= /usr/class/cs143/cool
+CLASSDIR= /usr/class/cc4/cool
 CLASSPATH := ${CLASSDIR}/lib:.:/usr/java/lib/rt.jar
 
 lab11: Lab11.class

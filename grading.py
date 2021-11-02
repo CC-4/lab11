@@ -1,6 +1,6 @@
 import os
 import gzip
-import cPickle
+import _pickle as cPickle
 
 def mkdir():
     os.system('rm -rf ' + os.path.join('grading'))
