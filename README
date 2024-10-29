@@ -1,1 +1,9 @@
 Lab 11 - Optimizaciones
+
+Main es un ListNode que contiene varios métodos, lo podemos recorrer como nuestras demás enumeraciones usadas en clase
+
+Desde method debemos llamar al optimizador de su expresión
+Luego debemos sustituír la expresión actual por la expresión optimizada
+
+En cada optimización realizaremos lo mismo...
+Optimizar de forma recursiva y sustituir las expresiones actuales
