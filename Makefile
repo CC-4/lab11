@@ -20,7 +20,7 @@ Lab11.class: parser.java sym.java Yylex.java cool-tree.java Lab11.java SymbolTab
 
 # Autrograder
 check: lab11 grading.py
-	python grading.py
+	python3 grading.py
 
 clean:
 	rm -rf grading Yylex.java parser.java sym.java *.class
